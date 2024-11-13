@@ -1,12 +1,15 @@
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-jc-text-display';
+import { multiply, greet } from 'react-native-jc-text-display';
 
 const result = multiply(3, 7);
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text style={styles.bigText}>Result: {result}</Text>
+      <Text style={styles.bigText}>
+        Greeting: {greet('SANAY KA NA MAG KOTLIN')}
+      </Text>
     </View>
   );
 }
@@ -21,5 +24,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     marginVertical: 20,
+  },
+  bigText: {
+    fontSize: 20,
   },
 });

@@ -159,7 +159,6 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "codegen",
       [
         "commonjs",
         {
@@ -186,8 +185,8 @@
     "type": "all",
     "jsSrcsDir": "src",
     "outputDir": {
-      "ios": "ios/generated",
-      "android": "android/generated"
+      "ios": "ios/generated/react/renderer/components",
+      "android": "android/generated/react/renderer/components"
     },
     "android": {
       "javaPackageName": "com.jctextdisplay"

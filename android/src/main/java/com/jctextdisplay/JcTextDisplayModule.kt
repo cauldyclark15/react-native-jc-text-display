@@ -17,6 +17,10 @@ class JcTextDisplayModule(reactContext: ReactApplicationContext) :
     return a * b
   }
 
+  override fun greet(name: String): String {
+    return "Hello, $name!"
+  }
+
   companion object {
     const val NAME = "JcTextDisplay"
   }
