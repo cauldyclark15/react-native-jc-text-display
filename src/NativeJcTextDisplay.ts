@@ -7,15 +7,15 @@ export interface Spec extends TurboModule {
   turnLedsOffAndDisableCallbacks(): void;
   startLedSolid(
     ledColor: number,
-    serialUsbDevice?: any,
+    serialUsbDevice?: string,
     rgbColorForSerial?: string
   ): void;
   startLedBlinking(
     ledColor: number,
-    serialUsbDevice?: any,
+    serialUsbDevice?: string,
     rgbColorForSerial?: string
   ): void;
-  startHolidayBlinking(serialUsbDevice?: any): void;
+  startHolidayBlinking(serialUsbDevice?: string): void;
   loopInCyclingColors(): void;
   RED: number;
   GREEN: number;
