@@ -1,5 +1,12 @@
 
 
+## [0.1.6](https://github.com/cauldyclark15/react-native-jc-text-display/compare/v0.1.5...v0.1.6) (2024-12-02)
+
+
+### Bug Fixes
+
+* declaration ([2774d56](https://github.com/cauldyclark15/react-native-jc-text-display/commit/2774d56787e14a48dba001567ebccb55a2f78f03))
+
 ## [0.1.5](https://github.com/cauldyclark15/react-native-jc-text-display/compare/v0.1.4...v0.1.5) (2024-12-02)
 
 
