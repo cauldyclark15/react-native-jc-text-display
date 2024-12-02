@@ -1,10 +1,7 @@
 import { StyleSheet, View, Text, Button } from 'react-native';
-import JcTextDisplay, {
-  multiply,
-  greet,
-  RED,
-  BLUE,
-} from 'react-native-jc-text-display';
+import JcTextDisplay from 'react-native-jc-text-display';
+
+const { RED, BLUE, multiply, greet } = JcTextDisplay;
 
 const result = multiply(3, 7);
 

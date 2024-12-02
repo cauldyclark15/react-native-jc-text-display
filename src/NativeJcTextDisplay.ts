@@ -26,8 +26,4 @@ export interface Spec extends TurboModule {
   WHITE: number;
 }
 
-const JcTextDisplay = TurboModuleRegistry.getEnforcing<Spec>('JcTextDisplay');
-
-export const { RED, GREEN, BLUE, TEAL, PINK, YELLOW, WHITE } = JcTextDisplay;
-
-export default JcTextDisplay;
+export default TurboModuleRegistry.getEnforcing<Spec>('JcTextDisplay');
