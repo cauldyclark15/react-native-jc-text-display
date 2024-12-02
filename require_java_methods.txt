@@ -1,0 +1,179 @@
+package expo.modules.ledmanager;
+package com.example.elcapi;
+import android.os.Handler;
+import com.synctimes.synctimeslibrary.SerialUsbDevice;
+/**
+* Created by xiao_ on 2018/5/15.
+*/
+public class JniElc
+{
+    public static Handler ledHandler = new Handler();
+    public static final int defaultBrightness = 1;
+    public static int ledBrightness = 1;
+    public static Boolean ledBrightnessIsIncreasing = true;
+    public static int activeColor;
+    public static Boolean activeIsBlinking = false;
+    private static native int ledoff();
+    private static native int seekstart();
+    private static native int seekstop();
+    private static native int ledseek(int flag, int progress);
+    static {
+        System.loadLibrary(“jnielc”);
+    }
+    public static void TurnLedsOffAndDisableCallbacks() {
+        try {
+            activeColor = 0;
+            ledHandler.removeCallbacksAndMessages(null);
+            seekstart();
+            ledoff();
+            seekstop();
+//            activeColor = 0; //might need to bring this back
+        } catch (Exception ignored) {
+        }
+    }
+    private static void TurnLedsOffTemporarily() {
+        try {
+            activeColor = 0;
+            seekstart();
+            ledoff();
+            seekstop();
+//            activeColor = 0; //might need to bring this back
+        } catch (Exception ignored) {
+        }
+    }
+    public static void StartLedSolid(int ledColor) {
+        StartLedSolid(ledColor, null, null);
+    }
+    public static void StartLedSolid (int ledColor, SerialUsbDevice serialUsbDevice, String rgbColorForSerial){
+        try {
+            if (!activeIsBlinking && activeColor == ledColor) return;
+            ledHandler.removeCallbacksAndMessages(null);
+            seekstart();
+            ledseek(ledColor, defaultBrightness);
+            ledseek(ledColor + 16, defaultBrightness);
+            activeColor = ledColor;
+            activeIsBlinking = false;
+            if (serialUsbDevice != null) {
+                serialUsbDevice.WritePortColor(rgbColorForSerial);
+            }
+            LoopInSolidHandler(ledColor, serialUsbDevice, rgbColorForSerial);
+            seekstop();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void StartLedBlinking(int ledColor) {
+        StartLedBlinking(ledColor, null, null);
+    }
+    public static void StartLedBlinking(int ledColor, SerialUsbDevice serialUsbDevice, String rgbColorForSerial){
+        try {
+            if (activeIsBlinking && activeColor == ledColor) return;
+            ledHandler.removeCallbacksAndMessages(null);
+            activeColor = ledColor;
+            activeIsBlinking = true;
+            ledBrightness = defaultBrightness;
+            seekstart();
+            ledseek(ledColor, ledBrightness);
+            ledseek(ledColor + 16, ledBrightness);
+            if (serialUsbDevice != null) {
+                serialUsbDevice.WritePortColor(rgbColorForSerial);
+            }
+            LoopInBlinkingHandler(ledColor, serialUsbDevice, rgbColorForSerial);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void StartHolidayBlinking(SerialUsbDevice serialUsbDevice){
+        try {
+            ledHandler.removeCallbacksAndMessages(null);
+            LoopInHolidayHandler(serialUsbDevice);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void LoopInCyclingColors(){
+        ledHandler.postDelayed(() -> {
+            try {
+                ledHandler.removeCallbacksAndMessages(null);
+                LoopInCyclingColors();
+                if (colorIterator >= allColors.length) colorIterator = 0;
+                activeColor = allColors[colorIterator];
+                colorIterator++;
+                ledBrightness = defaultBrightness;
+                seekstart();
+                ledseek(activeColor, ledBrightness);
+                ledseek(activeColor + 16, ledBrightness);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        },2000);
+    }
+    private static void LoopInSolidHandler(final int ledColor, SerialUsbDevice serialUsbDevice, String rgbColorForSerial) {
+        ledHandler.postDelayed(() -> {
+            LoopInSolidHandler(ledColor, serialUsbDevice, rgbColorForSerial);
+            seekstart();
+            ledseek(ledColor, ledBrightness);
+            ledseek(ledColor + 16, ledBrightness);
+            seekstop();
+            if (serialUsbDevice != null) {
+                serialUsbDevice.WritePortColor(rgbColorForSerial);
+            }
+        }, 10000);
+    }
+    private static void LoopInHolidayHandler(SerialUsbDevice serialUsbDevice) {
+        ledHandler.postDelayed(() -> {
+            LoopInHolidayHandler(serialUsbDevice);
+            // alternate green and red
+            activeColor = activeColor == ledoff() ? green : ledoff();
+            activeIsBlinking = true;
+            ledBrightness = defaultBrightness;
+            seekstart();
+            ledseek(activeColor, ledBrightness);
+            ledseek(activeColor + 16, ledBrightness);
+            if (serialUsbDevice == null) {
+                return;
+            }
+            if (activeColor == ledoff()) {
+                serialUsbDevice.WritePortColor(“255,0,0");
+            } else {
+                serialUsbDevice.WritePortColor(“0,255,0”);
+            }
+        }, 300);
+    }
+    private static void LoopInBlinkingHandler(final int ledColor, SerialUsbDevice serialUsbDevice, String rgbColorForSerial) {
+        ledHandler.postDelayed(() -> {
+            LoopInBlinkingHandler(ledColor, serialUsbDevice, rgbColorForSerial);
+            incrementLedBrightness();
+            if (ledBrightness == 0) {
+                TurnLedsOffTemporarily();
+                if (serialUsbDevice != null) {
+                    if (ledColor == blue)
+                        serialUsbDevice.WritePortColor(“0,0,0");
+                    else if (ledColor == ledoff())
+                        serialUsbDevice.WritePortColor(“0,0,0”);
+                }
+            } else {
+                seekstart();
+                ledseek(ledColor, ledBrightness);
+                ledseek(ledColor + 16, ledBrightness);
+                seekstop();
+                if (serialUsbDevice != null) {
+                    serialUsbDevice.WritePortColor(rgbColorForSerial);
+                }
+            }
+        }, 800);
+    }
+    private static void incrementLedBrightness() {
+        if (ledBrightness == defaultBrightness) ledBrightness = 0;
+        else ledBrightness = defaultBrightness;
+    }
+    public static final int red =0xa1;
+    public static final int green =0xa2;
+    public static final int blue =0xa3;
+    public static final int teal =0xa4;
+    public static final int pink =0xa5;
+    public static final int yellow =0xa6;
+    public static final int white =0xa7;
+    private static int colorIterator = 0;
+    private static int[] allColors = {red, yellow, green, teal, blue, pink, white};
+}
