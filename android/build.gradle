@@ -1,6 +1,7 @@
 buildscript {
-  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["JcTextDisplay_kotlinVersion"]
+  ext {
+    kotlinVersion = "1.8.0"
+  }
 
   repositories {
     google()
@@ -8,9 +9,8 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.2.1"
-    // noinspection DifferentKotlinGradleVersion
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    classpath("com.android.tools.build:gradle:7.4.2")
   }
 }
 
