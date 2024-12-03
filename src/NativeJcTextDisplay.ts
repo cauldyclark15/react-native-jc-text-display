@@ -17,13 +17,13 @@ export interface Spec extends TurboModule {
   ): void;
   startHolidayBlinking(serialUsbDevice?: string): void;
   loopInCyclingColors(): void;
-  RED: number;
-  GREEN: number;
-  BLUE: number;
-  TEAL: number;
-  PINK: number;
-  YELLOW: number;
-  WHITE: number;
+  getRED(): number;
+  getGREEN(): number;
+  getBLUE(): number;
+  getTEAL(): number;
+  getPINK(): number;
+  getYELLOW(): number;
+  getWHITE(): number;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('JcTextDisplay');

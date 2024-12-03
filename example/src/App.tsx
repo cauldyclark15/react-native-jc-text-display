@@ -1,17 +1,17 @@
 import { StyleSheet, View, Text, Button } from 'react-native';
 import JcTextDisplay from 'react-native-jc-text-display';
 
-const { RED, BLUE, multiply, greet } = JcTextDisplay;
+const { multiply, greet } = JcTextDisplay;
 
 const result = multiply(3, 7);
 
 export default function App() {
   const handleSolidRed = () => {
-    JcTextDisplay.startLedSolid(RED);
+    JcTextDisplay.startLedSolid(JcTextDisplay.getRED());
   };
 
   const handleBlinkingBlue = () => {
-    JcTextDisplay.startLedBlinking(BLUE);
+    JcTextDisplay.startLedBlinking(JcTextDisplay.getBLUE());
   };
 
   const handleCycleColors = () => {

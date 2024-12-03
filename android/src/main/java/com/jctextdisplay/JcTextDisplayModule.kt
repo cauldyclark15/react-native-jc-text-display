@@ -57,6 +57,27 @@ class JcTextDisplayModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun getRED() = RED
+
+  @ReactMethod
+  fun getGREEN() = GREEN
+
+  @ReactMethod
+  fun getBLUE() = BLUE
+
+  @ReactMethod
+  fun getTEAL() = TEAL
+
+  @ReactMethod
+  fun getPINK() = PINK
+
+  @ReactMethod
+  fun getYELLOW() = YELLOW
+
+  @ReactMethod
+  fun getWHITE() = WHITE
+
+  @ReactMethod
   fun turnLedsOffAndDisableCallbacks() {
     try {
       activeColor = 0
