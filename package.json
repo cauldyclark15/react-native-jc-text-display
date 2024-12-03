@@ -1,6 +1,6 @@
 {
   "name": "react-native-jc-text-display",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "TEST LIB DONT USE IN PROD",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
