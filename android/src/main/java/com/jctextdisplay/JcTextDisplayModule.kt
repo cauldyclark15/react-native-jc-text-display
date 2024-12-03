@@ -57,28 +57,28 @@ class JcTextDisplayModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun getRED() = RED
+  override fun getRED() = RED.toDouble()
 
   @ReactMethod
-  fun getGREEN() = GREEN
+  override fun getGREEN() = GREEN.toDouble()
 
   @ReactMethod
-  fun getBLUE() = BLUE
+  override fun getBLUE() = BLUE.toDouble()
 
   @ReactMethod
-  fun getTEAL() = TEAL
+  override fun getTEAL() = TEAL.toDouble()
 
   @ReactMethod
-  fun getPINK() = PINK
+  override fun getPINK() = PINK.toDouble()
 
   @ReactMethod
-  fun getYELLOW() = YELLOW
+  override fun getYELLOW() = YELLOW.toDouble()
 
   @ReactMethod
-  fun getWHITE() = WHITE
+  override fun getWHITE() = WHITE.toDouble()
 
   @ReactMethod
-  fun turnLedsOffAndDisableCallbacks() {
+  override fun turnLedsOffAndDisableCallbacks() {
     try {
       activeColor = 0
       ledHandler.removeCallbacksAndMessages(null)
@@ -100,42 +100,19 @@ class JcTextDisplayModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun startLedSolid(ledColor: Int, serialUsbDevice: Any? = null, rgbColorForSerial: String? = null) {
+  override fun startLedSolid(ledColor: Double, serialUsbDevice: String?, rgbColorForSerial: String?) {
     try {
-      if (!activeIsBlinking && activeColor == ledColor) return
+      val intLedColor = ledColor.toInt()
+      if (!activeIsBlinking && activeColor == intLedColor) return
       ledHandler.removeCallbacksAndMessages(null)
       seekstart()
-      ledseek(ledColor, DEFAULT_BRIGHTNESS)
-      ledseek(ledColor + 16, DEFAULT_BRIGHTNESS)
-      activeColor = ledColor
+      ledseek(intLedColor, DEFAULT_BRIGHTNESS)
+      ledseek(intLedColor + 16, DEFAULT_BRIGHTNESS)
+      activeColor = intLedColor
       activeIsBlinking = false
       
-      // Note: SerialUsbDevice functionality would need to be implemented
-      // serialUsbDevice?.WritePortColor(rgbColorForSerial)
-      
-      loopInSolidHandler(ledColor, serialUsbDevice, rgbColorForSerial)
+      loopInSolidHandler(intLedColor, null, rgbColorForSerial)
       seekstop()
-    } catch (e: Exception) {
-      e.printStackTrace()
-    }
-  }
-
-  @ReactMethod
-  fun startLedBlinking(ledColor: Int, serialUsbDevice: Any? = null, rgbColorForSerial: String? = null) {
-    try {
-      if (activeIsBlinking && activeColor == ledColor) return
-      ledHandler.removeCallbacksAndMessages(null)
-      activeColor = ledColor
-      activeIsBlinking = true
-      ledBrightness = DEFAULT_BRIGHTNESS
-      seekstart()
-      ledseek(ledColor, ledBrightness)
-      ledseek(ledColor + 16, ledBrightness)
-      
-      // Note: SerialUsbDevice functionality would need to be implemented
-      // serialUsbDevice?.WritePortColor(rgbColorForSerial)
-      
-      loopInBlinkingHandler(ledColor, serialUsbDevice, rgbColorForSerial)
     } catch (e: Exception) {
       e.printStackTrace()
     }
@@ -148,71 +125,11 @@ class JcTextDisplayModule(reactContext: ReactApplicationContext) :
       ledseek(ledColor, ledBrightness)
       ledseek(ledColor + 16, ledBrightness)
       seekstop()
-      
-      // Note: SerialUsbDevice functionality would need to be implemented
-      // serialUsbDevice?.WritePortColor(rgbColorForSerial)
     }, 10000)
   }
 
-  private fun loopInBlinkingHandler(ledColor: Int, serialUsbDevice: Any?, rgbColorForSerial: String?) {
-    ledHandler.postDelayed({
-      loopInBlinkingHandler(ledColor, serialUsbDevice, rgbColorForSerial)
-      incrementLedBrightness()
-      if (ledBrightness == 0) {
-        turnLedsOffTemporarily()
-        // Note: SerialUsbDevice functionality would need to be implemented
-        // when (ledColor) {
-        //     BLUE -> serialUsbDevice?.WritePortColor("0,0,0")
-        //     ledoff() -> serialUsbDevice?.WritePortColor("0,0,0")
-        // }
-      } else {
-        seekstart()
-        ledseek(ledColor, ledBrightness)
-        ledseek(ledColor + 16, ledBrightness)
-        seekstop()
-        // serialUsbDevice?.WritePortColor(rgbColorForSerial)
-      }
-    }, 800)
-  }
-
-  private fun incrementLedBrightness() {
-    ledBrightness = if (ledBrightness == DEFAULT_BRIGHTNESS) 0 else DEFAULT_BRIGHTNESS
-  }
-
   @ReactMethod
-  fun startHolidayBlinking(serialUsbDevice: Any? = null) {
-    try {
-      ledHandler.removeCallbacksAndMessages(null)
-      loopInHolidayHandler(serialUsbDevice)
-    } catch (e: Exception) {
-      e.printStackTrace()
-    }
-  }
-
-  private fun loopInHolidayHandler(serialUsbDevice: Any?) {
-    ledHandler.postDelayed({
-      loopInHolidayHandler(serialUsbDevice)
-      // alternate green and red
-      activeColor = if (activeColor == ledoff()) GREEN else ledoff()
-      activeIsBlinking = true
-      ledBrightness = DEFAULT_BRIGHTNESS
-      seekstart()
-      ledseek(activeColor, ledBrightness)
-      ledseek(activeColor + 16, ledBrightness)
-      
-      // Note: SerialUsbDevice functionality would need to be implemented
-      // if (serialUsbDevice != null) {
-      //     if (activeColor == ledoff()) {
-      //         serialUsbDevice.WritePortColor("255,0,0")
-      //     } else {
-      //         serialUsbDevice.WritePortColor("0,255,0")
-      //     }
-      // }
-    }, 300)
-  }
-
-  @ReactMethod
-  fun loopInCyclingColors() {
+  override fun loopInCyclingColors() {
     ledHandler.postDelayed({
       try {
         ledHandler.removeCallbacksAndMessages(null)
